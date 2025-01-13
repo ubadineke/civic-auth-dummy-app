@@ -1,28 +1,20 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  WagmiProvider,
-  createConfig,
-  useAccount,
-  useConnect,
-  http,
-  useBalance,
-} from 'wagmi';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { WagmiProvider, createConfig, useAccount, useConnect, http, useBalance } from 'wagmi';
 import { embeddedWallet, userHasWallet } from '@civic/auth-web3';
 import { CivicAuthProvider, UserButton, useUser } from '@civic/auth-web3/react';
-import { mainnet, sepolia } from "wagmi/chains";
+import { mainnet, sepolia } from 'wagmi/chains';
+import Homeview from './HomeView';
 
 const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
 if (!CLIENT_ID) throw new Error('CLIENT_ID is required');
 
 const wagmiConfig = createConfig({
-  chains: [ mainnet, sepolia ],
+  chains: [mainnet, sepolia],
   transports: {
     [mainnet.id]: http(),
     [sepolia.id]: http(),
   },
-  connectors: [
-    embeddedWallet(),
-  ],
+  connectors: [embeddedWallet()],
 });
 
 // Wagmi requires react-query
@@ -33,7 +25,7 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <WagmiProvider config={wagmiConfig}>
-        <CivicAuthProvider clientId={CLIENT_ID} >
+        <CivicAuthProvider clientId={CLIENT_ID}>
           <AppContent />
         </CivicAuthProvider>
       </WagmiProvider>
@@ -47,12 +39,11 @@ const AppContent = () => {
   const { connect, connectors } = useConnect();
   const { isConnected } = useAccount();
   const balance = useBalance({
-    address: userHasWallet(userContext)
-      ? userContext.walletAddress as `0x${string}` : undefined,
+    address: userHasWallet(userContext) ? (userContext.walletAddress as `0x${string}`) : undefined,
   });
 
   // A function to connect an existing civic embedded wallet
-  const connectExistingWallet = () => { 
+  const connectExistingWallet = () => {
     return connect({
       connector: connectors?.[0],
     });
@@ -68,27 +59,33 @@ const AppContent = () => {
 
   return (
     <>
+      <Homeview></Homeview>
       <UserButton />
-      {userContext.user &&
+      {userContext.user && (
         <div>
-          {!userHasWallet(userContext) &&
-            <p><button onClick={createWallet}>Create Wallet</button></p>
-          }
-          {userHasWallet(userContext) &&
+          {!userHasWallet(userContext) && (
+            <p>
+              <button onClick={createWallet}>Create Wallet</button>
+            </p>
+          )}
+          {userHasWallet(userContext) && (
             <>
               <p>Wallet address: {userContext.walletAddress}</p>
-              <p>Balance: {
-                balance?.data
+              <p>
+                Balance:{' '}
+                {balance?.data
                   ? `${(BigInt(balance.data.value) / BigInt(1e18)).toString()} ${balance.data.symbol}`
-                  : 'Loading...'
-              }</p>
-              {isConnected ? <p>Wallet is connected</p> : (
+                  : 'Loading...'}
+              </p>
+              {isConnected ? (
+                <p>Wallet is connected</p>
+              ) : (
                 <button onClick={connectExistingWallet}>Connect Wallet</button>
               )}
             </>
-          }
+          )}
         </div>
-      }
+      )}
     </>
   );
 };

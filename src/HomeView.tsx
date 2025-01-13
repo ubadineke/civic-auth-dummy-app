@@ -1,20 +1,20 @@
-import { useState } from "react";
+import { useState } from 'react';
 import { CreateCampaignModal } from './CreateCampaignModal';
-import { Footer } from "./Footer";
+import { Footer } from './Footer';
+import styles from './Test.module.css';
 
-export default function Homeview(){
-
+export default function Homeview() {
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 
-    // Function to open the modal
-    const openModal = () => {
-      setIsModalOpen(true);
-    };
-  
-    // Function to close the modal
-    const closeModal = () => {
-      setIsModalOpen(false);
-    };
+  // Function to open the modal
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  // Function to close the modal
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <div className="md:hero mx-auto p-4">
@@ -38,11 +38,8 @@ export default function Homeview(){
         </h4>
         <h2 className="text-red-500 text-xl">Advised: Donate/withdraw in small amounts (e.g 0.1, 0.5)!!!</h2>
         {/* Modal Component */}
-        <CreateCampaignModal
-          isOpen={isModalOpen}
-          onClose={closeModal}
-        />
-        <Footer/>
+        <CreateCampaignModal isOpen={isModalOpen} onClose={closeModal} />
+        <Footer />
       </div>
     </div>
   );
