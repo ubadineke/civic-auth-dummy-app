@@ -1,9 +1,9 @@
-import { FC } from 'react';
+import { FC } from "react";
 
 export const Footer: FC = () => {
   return (
-    <div className="flex">
-      <footer className="border-t-2 border-[#141414] bg-black hover:text-white w-screen">
+    <div className="">
+      <footer className="border-t-2 border-[#141414] bg-black hover:text-white w-full block">
         <div className="w-full flex flex-col items-center justify-center my-3 mt-4">
           <p>Made by Ubadineke</p>
           <div className="flex md:ml-2">
