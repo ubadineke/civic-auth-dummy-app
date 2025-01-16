@@ -1,12 +1,21 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { WagmiProvider, createConfig, useAccount, useConnect, http, useBalance } from 'wagmi';
-import { embeddedWallet, userHasWallet } from '@civic/auth-web3';
-import { CivicAuthProvider, UserButton, useUser } from '@civic/auth-web3/react';
-import { mainnet, sepolia } from 'wagmi/chains';
-import Homeview from './HomeView';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  WagmiProvider,
+  createConfig,
+  useAccount,
+  useConnect,
+  http,
+  useBalance,
+} from "wagmi";
+import { embeddedWallet, userHasWallet } from "@civic/auth-web3";
+import { CivicAuthProvider, UserButton, useUser } from "@civic/auth-web3/react";
+import { mainnet, sepolia } from "wagmi/chains";
+import Homeview from "./HomeView";
+import { FaGithub } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 
 const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
-if (!CLIENT_ID) throw new Error('CLIENT_ID is required');
+if (!CLIENT_ID) throw new Error("CLIENT_ID is required");
 
 const wagmiConfig = createConfig({
   chains: [mainnet, sepolia],
@@ -39,7 +48,9 @@ const AppContent = () => {
   const { connect, connectors } = useConnect();
   const { isConnected } = useAccount();
   const balance = useBalance({
-    address: userHasWallet(userContext) ? (userContext.walletAddress as `0x${string}`) : undefined,
+    address: userHasWallet(userContext)
+      ? (userContext.walletAddress as `0x${string}`)
+      : undefined,
   });
 
   // A function to connect an existing civic embedded wallet
@@ -59,32 +70,39 @@ const AppContent = () => {
 
   return (
     <>
-      <Homeview></Homeview>
-      <UserButton />
-      {userContext.user && (
-        <div>
-          {!userHasWallet(userContext) && (
-            <p>
-              <button onClick={createWallet}>Create Wallet</button>
-            </p>
-          )}
-          {userHasWallet(userContext) && (
-            <>
-              <p>Wallet address: {userContext.walletAddress}</p>
-              <p>
-                Balance:{' '}
-                {balance?.data
-                  ? `${(BigInt(balance.data.value) / BigInt(1e18)).toString()} ${balance.data.symbol}`
-                  : 'Loading...'}
-              </p>
-              {isConnected ? (
-                <p>Wallet is connected</p>
-              ) : (
-                <button onClick={connectExistingWallet}>Connect Wallet</button>
-              )}
-            </>
-          )}
+      {!userContext.user && (
+        <div className="w-full h-screen flex items-center justify-center">
+          <UserButton className="hover: text-black" />
         </div>
+      )}
+      {userContext.user && (
+        <>
+          <Homeview
+            isConnected={isConnected}
+            balance={balance}
+            createWallet={createWallet}
+            connectExistingWallet={connectExistingWallet}
+          />
+          <footer className="w-full min-h-16 bg-black text-white flex flex-col items-center justify-center gap-3 p-4">
+            <span className="text-2xl font-bold">Made By Ubadineke</span>
+            <div className="flex items-center justify-center gap-3">
+              <a
+                href="https://twitter.com/ubadinekethedev"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <FaXTwitter className="w-7 h-7" />
+              </a>
+              <a
+                href="https://github.com/ubadineke"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <FaGithub className="w-7 h-7" />
+              </a>
+            </div>
+          </footer>
+        </>
       )}
     </>
   );
